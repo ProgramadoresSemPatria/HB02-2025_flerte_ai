@@ -49,19 +49,25 @@ namespace flerte_ai_backend.Controllers
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == loginDto.Email);
 
-            if (user == null)
-            {
-                return Unauthorized("E-mail ou senha inválidos.");
-            }
-
-            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
                 return Unauthorized("E-mail ou senha inválidos.");
             }
 
             var token = _tokenService.CreateToken(user);
 
-            return Ok(new { token = token });
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
+
+            return Ok(new
+            {
+                Token = token,
+                User = userDto
+            });
         }
     }
 }
