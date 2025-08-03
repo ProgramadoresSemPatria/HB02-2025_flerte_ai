@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "LwSH5UV0rzo=",
+  "dgSpecHash": "tmw3214Mbec=",
   "success": true,
   "projectFilePath": "C:\\flerte.ai\\HB02-2025_Flerte_AI\\flerte-ai-backend\\flerte-ai-backend.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Raphael\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Raphael\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Raphael\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.7\\microsoft.aspnetcore.authentication.jwtbearer.8.0.7.nupkg.sha512",
     "C:\\Users\\Raphael\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
