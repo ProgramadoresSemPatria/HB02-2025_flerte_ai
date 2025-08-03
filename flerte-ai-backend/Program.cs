@@ -14,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<AIService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

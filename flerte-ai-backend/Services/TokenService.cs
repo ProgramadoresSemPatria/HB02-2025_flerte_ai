@@ -21,7 +21,6 @@ namespace flerte_ai_backend.Services
         {
             var claims = new List<Claim>
             {
-                // Alterado aqui para usar o padrão do .NET
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };

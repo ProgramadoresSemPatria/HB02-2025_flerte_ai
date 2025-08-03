@@ -1,6 +1,7 @@
 ﻿using flerte_ai_backend.Data;
 using flerte_ai_backend.DTOs;
 using flerte_ai_backend.Entities;
+using flerte_ai_backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,15 @@ namespace flerte_ai_backend.Controllers
     public class ConversationsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly AIService _aiService;
 
-        public ConversationsController(ApplicationDbContext context)
+        public ConversationsController(
+            ApplicationDbContext context,
+            AIService aiService
+            )
         {
             _context = context;
+            _aiService = aiService;
         }
 
         [HttpPost]
@@ -78,9 +84,9 @@ namespace flerte_ai_backend.Controllers
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var conversation = await _context.Conversations.FindAsync(id);
+            var conversation = await _context.Conversations.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
 
-            if (conversation == null || conversation.UserId != userId)
+            if (conversation == null)
             {
                 return NotFound("Conversa não encontrada ou não pertence ao usuário.");
             }
@@ -94,7 +100,42 @@ namespace flerte_ai_backend.Controllers
             _context.Messages.Add(userMessage);
             await _context.SaveChangesAsync();
 
-            return Ok(userMessage);
+            var history = await _context.Messages
+                .Where(m => m.ConversationId == id)
+                .OrderByDescending(m => m.CreatedAt)
+                .Take(10)
+                .OrderBy(m => m.CreatedAt)
+                .Select(m => new DTOs.AI.HistoryItem(m.Sender.ToString().ToLower(), m.Content))
+                .ToListAsync();
+
+            var preferences = await _context.UserPreferences
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            var preferencesDto = new DTOs.AI.PreferencesDto(
+                Style: preferences?.PersonalityStyle ?? "Neutro",
+                Length: preferences?.ResponseLength ?? "Média"
+            );
+
+            var aiRequestDto = new DTOs.AI.AIRequestDto(history, preferencesDto);
+
+            var aiResponseContent = await _aiService.GetAIResponseAsync(aiRequestDto);
+
+            var aiMessage = new Message
+            {
+                Content = aiResponseContent,
+                Sender = Enumerators.SenderType.AI,
+                ConversationId = id
+            };
+            _context.Messages.Add(aiMessage);
+            await _context.SaveChangesAsync();
+
+            return Ok(new MessageDto
+            {
+                Id = aiMessage.Id,
+                Content = aiMessage.Content,
+                Sender = aiMessage.Sender,
+                CreatedAt = aiMessage.CreatedAt
+            });
         }
     }
 }
