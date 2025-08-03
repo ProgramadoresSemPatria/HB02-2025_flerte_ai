@@ -20,11 +20,29 @@ namespace flerte_ai_backend.Controllers
 
         public ConversationsController(
             ApplicationDbContext context,
-            AIService aiService
-            )
+            AIService aiService)
         {
             _context = context;
             _aiService = aiService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ConversationListDto>>> GetConversations()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var conversations = await _context.Conversations
+                .Where(c => c.UserId == userId)
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(c => new ConversationListDto
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    CreatedAt = c.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(conversations);
         }
 
         [HttpPost]
