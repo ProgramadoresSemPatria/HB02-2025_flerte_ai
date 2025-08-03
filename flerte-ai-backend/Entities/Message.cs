@@ -9,7 +9,6 @@ namespace flerte_ai_backend.Entities
         public SenderType Sender { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Chave estrangeira para Conversation
         public int ConversationId { get; set; }
         public virtual Conversation Conversation { get; set; }
     }
