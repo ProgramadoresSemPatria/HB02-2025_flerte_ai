@@ -41,5 +41,29 @@ namespace flerte_ai_backend.Controllers
 
             return Ok(userDto);
         }
+
+        [HttpPut]
+        public async Task<ActionResult<UserDto>> UpdateMyProfile(ProfileUpdateDto updateDto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            user.Name = updateDto.Name;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            });
+        }
     }
 }
