@@ -72,5 +72,29 @@ namespace flerte_ai_backend.Controllers
 
             return Ok(messagesDto);
         }
+
+        [HttpPost("{id}/messages")]
+        public async Task<IActionResult> AddMessageToConversation(int id, MessageCreateDto createDto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var conversation = await _context.Conversations.FindAsync(id);
+
+            if (conversation == null || conversation.UserId != userId)
+            {
+                return NotFound("Conversa não encontrada ou não pertence ao usuário.");
+            }
+
+            var userMessage = new Message
+            {
+                Content = createDto.Content,
+                Sender = Enumerators.SenderType.User,
+                ConversationId = id
+            };
+            _context.Messages.Add(userMessage);
+            await _context.SaveChangesAsync();
+
+            return Ok(userMessage);
+        }
     }
 }
