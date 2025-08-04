@@ -4,6 +4,7 @@ from typing import List
 class MessageHistory(BaseModel):
     role: str
     content: str
+    image_data: Optional[bytes] = None
 
 class UserPreferences(BaseModel):
     style: str
