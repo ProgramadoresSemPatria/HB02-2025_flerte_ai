@@ -1,0 +1,6 @@
+@flerte_ai_backend_HostAddress = http://localhost:5093
+
+GET {{flerte_ai_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
