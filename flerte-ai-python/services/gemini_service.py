@@ -1,6 +1,6 @@
 import google.generativeai as genai
-from config import settings
-from models import UserPreferences
+from core.config import settings
+from schemas.models import UserPreferences
 from PIL import Image
 import io
 
