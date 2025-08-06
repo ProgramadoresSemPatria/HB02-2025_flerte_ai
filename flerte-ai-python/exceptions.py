@@ -15,7 +15,7 @@ def handle_service_errors(func):
         try:
             return await func(*args, **kwargs)
         except GeminiServiceError as e:
-            raise HTTPException(status_code=503, detail=f"Erro no serviço Gemini: {e.message}")
+            raise HTTPException(status_code=503, detail=f"Erro no serviço do LLM: {e.message}")
         except ConfigurationError as e:
             raise HTTPException(status_code=500, detail=f"Erro de configuração: {e.message}")
         except Exception as e:
